@@ -16,7 +16,7 @@ export type TstateUser = {
   isAuthenticated: boolean;
   user: TUser | null;
   error: null | string;
-  loginUserRequest: boolean;
+  loading: boolean;
 };
 
 const initialState: TstateUser = {
@@ -24,7 +24,7 @@ const initialState: TstateUser = {
   isAuthenticated: false,
   user: null,
   error: null,
-  loginUserRequest: false
+  loading: false
 };
 
 export const userApi = createAsyncThunk('user/userApi', getUserApi);
@@ -82,79 +82,79 @@ export const userStateSlice = createSlice({
         state.isAuthenticated = false;
         state.error = null;
         state.user = null;
-        state.loginUserRequest = true;
+        state.loading = true;
       })
       .addCase(userApi.fulfilled, (state, action) => {
         state.isAuthChecked = true;
         state.user = action.payload.user;
         state.isAuthenticated = true;
-        state.loginUserRequest = false;
+        state.loading = false;
       })
       .addCase(userApi.rejected, (state, action) => {
         state.error = action.error.message || 'Failed to fetch user data';
         state.isAuthenticated = false;
         state.isAuthChecked = true;
         state.user = null;
-        state.loginUserRequest = false;
+        state.loading = false;
       })
       .addCase(toRegisterUser.pending, (state) => {
         state.isAuthenticated = false;
         state.user = null;
-        state.loginUserRequest = true;
+        state.loading = true;
       })
       .addCase(toRegisterUser.fulfilled, (state, action) => {
         state.isAuthenticated = true;
         state.user = action.payload;
-        state.loginUserRequest = false;
+        state.loading = false;
       })
       .addCase(toRegisterUser.rejected, (state, action) => {
         state.isAuthenticated = false;
         state.error = action.error.message || 'Failed to fetch register user ';
-        state.loginUserRequest = false;
+        state.loading = false;
       })
       .addCase(logInUser.pending, (state) => {
         state.error = null;
-        state.loginUserRequest = true;
+        state.loading = true;
       })
       .addCase(logInUser.fulfilled, (state, action) => {
         state.isAuthenticated = true;
         state.user = action.payload;
-        state.loginUserRequest = false;
+        state.loading = false;
         state.isAuthChecked = true;
       })
       .addCase(logInUser.rejected, (state, action) => {
-        state.loginUserRequest = false;
+        state.loading = false;
         state.error = action.error.message || 'Failed to fetch Log in user ';
         state.isAuthChecked = true;
       })
       .addCase(logOutUser.pending, (state) => {
         state.isAuthenticated = true;
-        state.loginUserRequest = true;
+        state.loading = true;
       })
       .addCase(logOutUser.fulfilled, (state, action) => {
         state.isAuthenticated = false;
-        state.loginUserRequest = false;
+        state.loading = false;
         state.user = null;
         deleteCookie('accessToken');
         localStorage.removeItem('refreshToken');
       })
       .addCase(logOutUser.rejected, (state, action) => {
         state.isAuthenticated = false;
-        state.loginUserRequest = false;
+        state.loading = false;
         state.error = action.error.message || 'Failed to fetch Log Out user ';
       })
       .addCase(updateUser.pending, (state) => {
         state.isAuthenticated = true;
-        state.loginUserRequest = true;
+        state.loading = true;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
         state.isAuthenticated = true;
         state.user = action.payload.user;
-        state.loginUserRequest = false;
+        state.loading = false;
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.error = action.error.message || 'Failed to fetch update user';
-        state.loginUserRequest = false;
+        state.loading = false;
       });
   },
   selectors: {
@@ -162,7 +162,7 @@ export const userStateSlice = createSlice({
     selectIsAuthenticated: (state) => state.isAuthenticated,
     selectLoginUserError: (state) => state.error,
     selectIsAuthChecked: (state) => state.isAuthChecked,
-    selectloginUserRequest: (state) => state.loginUserRequest
+    selectloginUserRequest: (state) => state.loading
   }
 });
 

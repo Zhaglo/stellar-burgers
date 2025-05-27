@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 describe('Создание заказа', function () {
   this.beforeEach(function() {
     cy.intercept('GET', 'api/auth/user', { fixture: 'user-response.json' });

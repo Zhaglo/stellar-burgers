@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 describe('Добавление ингредиента из списка в конструктор', function () {
   this.beforeEach(function() {
     cy.intercept('GET', 'api/ingredients', {fixture: 'ingredients.json'});

@@ -1,3 +1,5 @@
+/// <reference types="cypress" />
+
 describe('Работа модальных окон', function () {
   this.beforeEach(function() {
     cy.intercept('GET', 'api/ingredients', {fixture: 'ingredients.json'});

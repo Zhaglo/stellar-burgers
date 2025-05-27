@@ -11,7 +11,7 @@ export type TBurgerConstructorState = {
   loading: boolean;
   error: null | string;
   constructorItems: {
-    bun: TIngredient | null;
+    bun: TConstructorIngredient | null;
     ingredients: Array<TConstructorIngredient>;
   };
   orderRequest: boolean;

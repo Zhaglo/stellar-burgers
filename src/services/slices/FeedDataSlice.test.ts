@@ -1,10 +1,13 @@
-import slice from './FeedDataSlice';
-import { getFeedData, getOrderByNumber } from './FeedDataSlice';
+import feedSlice from './FeedDataSlice';
+import {
+  getFeedData,
+  getOrderByNumber
+} from './FeedDataSlice';
 
-const reducer = slice.reducer;
+const reducer = feedSlice.reducer;
 
-describe('Проверка FeedDataSlice', () => {
-  const initialState = {
+describe('FeedDataSlice — тестирование редьюсера ленты заказов', () => {
+  const defaultState = {
     orders: [],
     total: 0,
     totalToday: 0,
@@ -13,101 +16,121 @@ describe('Проверка FeedDataSlice', () => {
     modalOrder: null
   };
 
-  it('Проверка начального состояния', () => {
-    expect(reducer(undefined, { type: '' })).toEqual(initialState);
+  it('возвращает начальное состояние', () => {
+    const state = reducer(undefined, { type: 'UNKNOWN_ACTION' });
+    expect(state).toEqual(defaultState);
   });
 
-  //getFeedData
-  it('Установка loading=true при getFeedData.pending', () => {
-    const action = { type: getFeedData.pending.type };
-    const state = reducer(initialState, action);
-    expect(state.loading).toBe(true);
-  });
+  describe('getFeedData async thunk', () => {
+    it('устанавливает loading в true на pending', () => {
+      const nextState = reducer(defaultState, { type: getFeedData.pending.type });
+      expect(nextState.loading).toBe(true);
+    });
 
-  it('Установка данных и loading=false при getFeedData.fulfilled', () => {
-    const mockPayload = {
-      orders: [
+    it('обновляет данные на fulfilled', () => {
+      const mockResponse = {
+        orders: [
+          {
+            _id: 'order1',
+            status: 'done',
+            name: 'Бургер №1',
+            createdAt: '2025-05-27T12:00:00Z',
+            updatedAt: '2025-05-27T13:00:00Z',
+            number: 1,
+            ingredients: ['ing1', 'ing2', 'ing3']
+          },
+          {
+            _id: 'order2',
+            status: 'done',
+            name: 'Бургер №2',
+            createdAt: '2025-05-27T14:00:00Z',
+            updatedAt: '2025-05-27T14:30:00Z',
+            number: 123246,
+            ingredients: ['ing4', 'ing5']
+          }
+        ],
+        total: 2,
+        totalToday: 2
+      };
+
+      const result = reducer(
+        { ...defaultState, loading: true },
+        { type: getFeedData.fulfilled.type, payload: mockResponse }
+      );
+
+      expect(result.loading).toBe(false);
+      expect(result.orders).toEqual(mockResponse.orders);
+      expect(result.total).toBe(2);
+      expect(result.totalToday).toBe(2);
+    });
+
+    it('обрабатывает ошибку при rejected', () => {
+      const result = reducer(
+        { ...defaultState, loading: true },
         {
-          _id: 'order1',
-          status: 'done',
-          name: 'Бургер №1',
-          createdAt: '2025-05-27T12:00:00Z',
-          updatedAt: '2025-05-27T13:00:00Z',
-          number: 1,
-          ingredients: ['ing1', 'ing2', 'ing3']
-        },
-        {
-          _id: 'order2',
-          status: 'done',
-          name: 'Бургер №2',
-          createdAt: '2025-05-27T14:00:00Z',
-          updatedAt: '2025-05-27T14:30:00Z',
-          number: 123246,
-          ingredients: ['ing4', 'ing5']
+          type: getFeedData.rejected.type,
+          error: { message: 'error' }
         }
-      ],
-      total: 2,
-      totalToday: 2
-    };
+      );
 
-    const action = { type: getFeedData.fulfilled.type, payload: mockPayload };
-    const state = reducer({ ...initialState, loading: true }, action);
-
-    expect(state.loading).toBe(false);
-    expect(state.orders).toEqual(mockPayload.orders);
-    expect(state.total).toBe(mockPayload.total);
-    expect(state.totalToday).toBe(mockPayload.totalToday);
+      expect(result.loading).toBe(false);
+      expect(result.error).toBe('error');
+    });
   });
 
-  it('Установка ошибки и loading=false при getFeedData.rejected', () => {
-    const action = { type: getFeedData.rejected.type, error: { message: 'error' } };
-    const state = reducer({ ...initialState, loading: true }, action);
-    expect(state.loading).toBe(false);
-    expect(state.error).toBe('error');
-  });
+  describe('getOrderByNumber async thunk', () => {
+    it('устанавливает loading в true на pending', () => {
+      const state = reducer(defaultState, { type: getOrderByNumber.pending.type });
+      expect(state.loading).toBe(true);
+    });
 
-  //getOrderByNumber
-  it('Установка loading=true при getOrderByNumber.pending', () => {
-    const action = { type: getOrderByNumber.pending.type };
-    const state = reducer(initialState, action);
-    expect(state.loading).toBe(true);
-  });
+    it('сохраняет первый заказ в modalOrder при fulfilled', () => {
+      const mockResponse = {
+        orders: [
+          {
+            _id: 'order1',
+            status: 'done',
+            name: 'Бургер №1',
+            createdAt: '2025-05-27T12:00:00Z',
+            updatedAt: '2025-05-27T13:00:00Z',
+            number: 1,
+            ingredients: ['ing1', 'ing2', 'ing3']
+          },
+          {
+            _id: 'order2',
+            status: 'done',
+            name: 'Бургер №2',
+            createdAt: '2025-05-27T14:00:00Z',
+            updatedAt: '2025-05-27T14:30:00Z',
+            number: 123246,
+            ingredients: ['ing4', 'ing5']
+          }
+        ]
+      };
 
-  it('Установка данных и loading=false при getOrderByNumber.fulfilled', () => {
-    const mockPayload = {
-      orders: [
+      const result = reducer(
+        { ...defaultState, loading: true },
         {
-          _id: 'order1',
-          status: 'done',
-          name: 'Бургер №1',
-          createdAt: '2025-05-27T12:00:00Z',
-          updatedAt: '2025-05-27T13:00:00Z',
-          number: 1,
-          ingredients: ['ing1', 'ing2', 'ing3']
-        },
-        {
-          _id: 'order2',
-          status: 'done',
-          name: 'Бургер №2',
-          createdAt: '2025-05-27T14:00:00Z',
-          updatedAt: '2025-05-27T14:30:00Z',
-          number: 123246,
-          ingredients: ['ing4', 'ing5']
+          type: getOrderByNumber.fulfilled.type,
+          payload: mockResponse
         }
-      ]
-    }
+      );
 
-    const action = { type: getOrderByNumber.fulfilled.type, payload: mockPayload };
-    const state = reducer({ ...initialState, loading: true }, action);
+      expect(result.loading).toBe(false);
+      expect(result.modalOrder).toEqual(mockResponse.orders[0]);
+    });
 
-    expect(state.loading).toBe(false);
-    expect(state.modalOrder).toEqual(mockPayload.orders[0]);
-  });
+    it('обрабатывает ошибку при rejected', () => {
+      const result = reducer(
+        { ...defaultState, loading: true },
+        {
+          type: getOrderByNumber.rejected.type,
+          error: { message: 'error' }
+        }
+      );
 
-  it('Установка ошибки и loading=false при getOrderByNumber.rejected', () => {
-    const action = { type: getOrderByNumber.rejected.type, error: { message: 'error' } };
-    const state = reducer({ ...initialState, loading: true }, action);
-    expect(state.loading).toBe(false);
-    expect(state.error).toBe('error');
+      expect(result.loading).toBe(false);
+      expect(result.error).toBe('error');
+    });
   });
 });

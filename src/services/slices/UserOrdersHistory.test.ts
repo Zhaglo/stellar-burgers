@@ -1,59 +1,69 @@
-import slice from './UserOrdersHistory';
+import userOrdersSlice from './UserOrdersHistory';
 import { ordersHistory } from './UserOrdersHistory';
 
-const reducer = slice.reducer;
+const reducer = userOrdersSlice.reducer;
 
-describe('Проверка UserOrdersSlice', () => {
-  const initialState = {
+describe('UserOrdersHistory — редьюсер заказов пользователя', () => {
+  const defaultState = {
     orders: [],
     error: null,
     loading: false
   };
 
-  it('Проверка начального состояния', () => {
-    expect(reducer(undefined, { type: '' })).toEqual(initialState);
+  it('возвращает корректное начальное состояние', () => {
+    const result = reducer(undefined, { type: 'UNKNOWN' });
+    expect(result).toEqual(defaultState);
   });
 
-  it('Установка loading=true при ordersHistory.pending', () => {
-    const action = { type: ordersHistory.pending.type };
-    const state = reducer(initialState, action);
-    expect(state.loading).toBe(true);
-  });
+  describe('ordersHistory async thunk', () => {
+    it('pending — устанавливает флаг загрузки', () => {
+      const action = { type: ordersHistory.pending.type };
+      const result = reducer(defaultState, action);
+      expect(result.loading).toBe(true);
+    });
 
-  it('Установка данных и loading=false при ordersHistory.fulfilled', () => {
-    const mockPayload = [
-      {
-        _id: 'order1',
-        status: 'done',
-        name: 'Бургер №1',
-        createdAt: '2025-05-27T12:00:00Z',
-        updatedAt: '2025-05-27T13:00:00Z',
-        number: 1,
-        ingredients: ['ing1', 'ing2', 'ing3']
-      },
-      {
-        _id: 'order2',
-        status: 'done',
-        name: 'Бургер №2',
-        createdAt: '2025-05-27T14:00:00Z',
-        updatedAt: '2025-05-27T14:30:00Z',
-        number: 123246,
-        ingredients: ['ing4', 'ing5']
-      }
-    ]
+    it('fulfilled — сохраняет полученные данные', () => {
+      const mockOrders = [
+        {
+          _id: 'order1',
+          status: 'done',
+          name: 'Бургер №1',
+          createdAt: '2025-05-27T12:00:00Z',
+          updatedAt: '2025-05-27T13:00:00Z',
+          number: 1,
+          ingredients: ['ing1', 'ing2', 'ing3']
+        },
+        {
+          _id: 'order2',
+          status: 'done',
+          name: 'Бургер №2',
+          createdAt: '2025-05-27T14:00:00Z',
+          updatedAt: '2025-05-27T14:30:00Z',
+          number: 123246,
+          ingredients: ['ing4', 'ing5']
+        }
+      ];
 
-    const action = { type: ordersHistory.fulfilled.type, payload: mockPayload };
-    const state = reducer({ ...initialState, loading: true }, action);
+      const action = {
+        type: ordersHistory.fulfilled.type,
+        payload: mockOrders
+      };
+      const result = reducer({ ...defaultState, loading: true }, action);
 
-    expect(state.loading).toBe(false);
-    expect(state.orders).toEqual(mockPayload);
-  });
+      expect(result.loading).toBe(false);
+      expect(result.orders).toEqual(mockOrders);
+    });
 
-  it('Установка ошибки и loading=false при ordersHistory.rejected', () => {
-    const action = { type: ordersHistory.rejected.type, error: { message: 'error' } };
-    const state = reducer({ ...initialState, loading: true }, action);
+    it('rejected — записывает ошибку', () => {
+      const errorMessage = 'error';
+      const action = {
+        type: ordersHistory.rejected.type,
+        error: { message: errorMessage }
+      };
+      const result = reducer({ ...defaultState, loading: true }, action);
 
-    expect(state.loading).toBe(false);
-    expect(state.error).toBe('error');
+      expect(result.loading).toBe(false);
+      expect(result.error).toBe(errorMessage);
+    });
   });
 });

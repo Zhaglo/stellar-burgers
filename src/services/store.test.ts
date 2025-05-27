@@ -1,11 +1,16 @@
 import { rootReducer } from './store';
 
-describe('Проверка инициализации rootReducer', () => {
-  it('Проверка инициализации rootReducer', () => {
-    const state = rootReducer(undefined, { type: '@@INIT' });
-    expect(state).toHaveProperty('userState');
-    expect(state).toHaveProperty('feed');
-    expect(state).toHaveProperty('burgerConstructor');
-    expect(state).toHaveProperty('orderHistory');
+describe('rootReducer — начальная инициализация', () => {
+  it('возвращает корректное начальное состояние с нужными слайсами', () => {
+    const initialState = rootReducer(undefined, { type: '@@INIT' });
+
+    expect(initialState).toEqual(
+      expect.objectContaining({
+        userState: expect.anything(),
+        feed: expect.anything(),
+        burgerConstructor: expect.anything(),
+        orderHistory: expect.anything()
+      })
+    );
   });
 });

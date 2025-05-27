@@ -1,27 +1,28 @@
-import slice from './IngredientsSlice';
+import ingredientSlice from './IngredientsSlice';
 import { getIngredients } from './IngredientsSlice';
 
-const reducer = slice.reducer;
+const reducer = ingredientSlice.reducer;
 
-describe('Проверка IngredientsSlice', () => {
-  const initialState = {
+describe('IngredientsSlice — тесты редьюсера ингредиентов', () => {
+  const defaultState = {
     ingredients: [],
     error: null,
     loading: false
   };
 
-  it('Проверка начального состояния', () => {
-    expect(reducer(undefined, { type: '' })).toEqual(initialState);
+  it('возвращает начальное состояние по умолчанию', () => {
+    const result = reducer(undefined, { type: 'UNKNOWN' });
+    expect(result).toEqual(defaultState);
   });
 
-  it('Установка loading=true при getIngredients.pending', () => {
+  it('устанавливает loading в true при getIngredients.pending', () => {
     const action = { type: getIngredients.pending.type };
-    const state = reducer(initialState, action);
-    expect(state.loading).toBe(true);
+    const result = reducer(defaultState, action);
+    expect(result.loading).toBe(true);
   });
 
-  it('Установка данных и loading=false при getIngredients.fulfilled', () => {
-    const mockPayload = [
+  it('сохраняет данные и снимает загрузку при getIngredients.fulfilled', () => {
+    const fakeIngredients = [
       {
         _id: '643d69a5c3f7b9001cfa093c',
         name: 'Краторная булка N-200i',
@@ -76,22 +77,30 @@ describe('Проверка IngredientsSlice', () => {
         image: 'https://code.s3.yandex.net/react/code/sauce-02.png',
         image_mobile: 'https://code.s3.yandex.net/react/code/sauce-02-mobile.png',
         image_large: 'https://code.s3.yandex.net/react/code/sauce-02-large.png',
-        __v: 0,
+        __v: 0
       }
-    ]
+    ];
 
-    const action = { type: getIngredients.fulfilled.type, payload: mockPayload };
-    const state = reducer({ ...initialState, loading: true }, action);
+    const action = {
+      type: getIngredients.fulfilled.type,
+      payload: fakeIngredients
+    };
 
-    expect(state.loading).toBe(false);
-    expect(state.ingredients).toEqual(mockPayload);
+    const result = reducer({ ...defaultState, loading: true }, action);
+
+    expect(result.loading).toBe(false);
+    expect(result.ingredients).toEqual(fakeIngredients);
   });
 
-  it('Установка ошибки и loading=false при getIngredients.rejected', () => {
-    const action = { type: getIngredients.rejected.type, error: { message: 'error' } };
-    const state = reducer({ ...initialState, loading: true }, action);
+  it('сохраняет ошибку при getIngredients.rejected', () => {
+    const action = {
+      type: getIngredients.rejected.type,
+      error: { message: 'error' }
+    };
 
-    expect(state.loading).toBe(false);
-    expect(state.error).toBe('error');
+    const result = reducer({ ...defaultState, loading: true }, action);
+
+    expect(result.loading).toBe(false);
+    expect(result.error).toBe('error');
   });
 });

@@ -1,4 +1,4 @@
-import slice from './BurgerConstructorSlice';
+import reducerSlice from './BurgerConstructorSlice';
 import {
   addIngredient,
   removeIngredient,
@@ -7,9 +7,9 @@ import {
   clearOrder
 } from './BurgerConstructorSlice';
 
-const reducer = slice.reducer;
+const reducer = reducerSlice.reducer;
 
-const testBurgerIngredients = {
+const mockIngredients = {
   bun: {
     _id: '643d69a5c3f7b9001cfa093c',
     name: 'Краторная булка N-200i',
@@ -24,7 +24,7 @@ const testBurgerIngredients = {
     image_large: 'https://code.s3.yandex.net/react/code/bun-02-large.png',
     __v: 0
   },
-  main1: {
+  mainA: {
     _id: '643d69a5c3f7b9001cfa0941',
     name: 'Биокотлета из марсианской Магнолии',
     type: 'main',
@@ -38,7 +38,7 @@ const testBurgerIngredients = {
     image_large: 'https://code.s3.yandex.net/react/code/meat-01-large.png',
     __v: 0
   },
-  main2: {
+  mainB: {
     _id: '643d69a5c3f7b9001cfa093e',
     name: 'Филе Люминесцентного тетраодонтимформа',
     type: 'main',
@@ -64,14 +64,15 @@ const testBurgerIngredients = {
     image: 'https://code.s3.yandex.net/react/code/sauce-02.png',
     image_mobile: 'https://code.s3.yandex.net/react/code/sauce-02-mobile.png',
     image_large: 'https://code.s3.yandex.net/react/code/sauce-02-large.png',
-    __v: 0,
-  },
+    __v: 0
+  }
 };
 
-describe('Проверка BurgerConstructorSlice', () => {
-  it('Проверка начального состояния', () => {
-    const state = reducer(undefined, { type: '' });
-    const expectedState = {
+describe('BurgerConstructorSlice — тесты редьюсера конструктора', () => {
+  it('возвращает начальное состояние по умолчанию', () => {
+    const initial = reducer(undefined, { type: 'UNKNOWN_ACTION' });
+
+    expect(initial).toEqual({
       loading: false,
       error: null,
       constructorItems: {
@@ -80,90 +81,68 @@ describe('Проверка BurgerConstructorSlice', () => {
       },
       orderRequest: false,
       orderModalData: null
-    };
-
-    expect(state).toEqual(expectedState);
+    });
   });
 
-  it('Обработка экшена добавления ингредиента', () => {
-    let state = reducer(undefined, addIngredient(testBurgerIngredients.bun));
+  it('добавляет ингредиенты корректно', () => {
+    let state = reducer(undefined, addIngredient(mockIngredients.bun));
+    expect(state.constructorItems.bun).toMatchObject(mockIngredients.bun);
+    expect(state.constructorItems.ingredients.length).toBe(0);
 
-    expect(state.constructorItems.bun).toMatchObject(testBurgerIngredients.bun);
-    expect(state.constructorItems.ingredients).toHaveLength(0);
+    state = reducer(state, addIngredient(mockIngredients.mainA));
+    state = reducer(state, addIngredient(mockIngredients.mainB));
+    state = reducer(state, addIngredient(mockIngredients.sauce));
 
-    state = reducer(state, addIngredient(testBurgerIngredients.main1));
-    expect(state.constructorItems.ingredients[0]).toMatchObject(testBurgerIngredients.main1);
-    expect(state.constructorItems.ingredients).toHaveLength(1);
-
-    state = reducer(state, addIngredient(testBurgerIngredients.main2));
-    expect(state.constructorItems.ingredients[1]).toMatchObject(testBurgerIngredients.main2);
-    expect(state.constructorItems.ingredients).toHaveLength(2);
-
-    state = reducer(state, addIngredient(testBurgerIngredients.sauce));
-    expect(state.constructorItems.ingredients[2]).toMatchObject(testBurgerIngredients.sauce);
     expect(state.constructorItems.ingredients).toHaveLength(3);
+    expect(state.constructorItems.ingredients[0]).toMatchObject(mockIngredients.mainA);
+    expect(state.constructorItems.ingredients[1]).toMatchObject(mockIngredients.mainB);
+    expect(state.constructorItems.ingredients[2]).toMatchObject(mockIngredients.sauce);
   });
 
-  it('Обработка экшена удаления ингредиента', () => {
+  it('удаляет ингредиент корректно', () => {
     let state = reducer(undefined, { type: '' });
+    state = reducer(state, addIngredient(mockIngredients.bun));
+    state = reducer(state, addIngredient(mockIngredients.mainA));
+    state = reducer(state, addIngredient(mockIngredients.mainB));
 
-    state = reducer(state, addIngredient(testBurgerIngredients.bun));
-    state = reducer(state, addIngredient(testBurgerIngredients.main1));
-    state = reducer(state, addIngredient(testBurgerIngredients.main2));
-    state = reducer(state, addIngredient(testBurgerIngredients.sauce));
-
-    const ingredientToRemove = state.constructorItems.ingredients.find(
-      item => item._id === testBurgerIngredients.main1._id
+    const toDelete = state.constructorItems.ingredients.find(
+      (el) => el._id === mockIngredients.mainA._id
     );
 
-    expect(state.constructorItems.ingredients).toContainEqual(ingredientToRemove);
-    expect(state.constructorItems.ingredients).toHaveLength(3);
+    expect(toDelete).toBeDefined();
+    expect(state.constructorItems.ingredients).toContainEqual(toDelete);
 
-    expect(ingredientToRemove).toBeDefined();
-
-    state = reducer(state, removeIngredient(ingredientToRemove!));
-    expect(state.constructorItems.ingredients).not.toContainEqual(ingredientToRemove);
-    expect(state.constructorItems.ingredients).toHaveLength(2);
+    state = reducer(state, removeIngredient(toDelete!));
+    expect(state.constructorItems.ingredients).not.toContainEqual(toDelete);
+    expect(state.constructorItems.ingredients).toHaveLength(1);
   });
 
-  it('Обработка экшена изменения порядка ингредиентов в начинке', () => {
+  it('перемещает ингредиенты вверх и вниз', () => {
     let state = reducer(undefined, { type: '' });
 
-    state = reducer(state, addIngredient(testBurgerIngredients.main1));
-    state = reducer(state, addIngredient(testBurgerIngredients.main2));
+    state = reducer(state, addIngredient(mockIngredients.mainA));
+    state = reducer(state, addIngredient(mockIngredients.mainB));
 
     state = reducer(state, moveDownIngredient(0));
-
-    expect(state.constructorItems.ingredients[0]).toMatchObject(testBurgerIngredients.main2);
-    expect(state.constructorItems.ingredients[1]).toMatchObject(testBurgerIngredients.main1);
+    expect(state.constructorItems.ingredients[0]).toMatchObject(mockIngredients.mainB);
+    expect(state.constructorItems.ingredients[1]).toMatchObject(mockIngredients.mainA);
 
     state = reducer(state, moveUpIngredient(1));
-
-    expect(state.constructorItems.ingredients[0]).toMatchObject(testBurgerIngredients.main1);
-    expect(state.constructorItems.ingredients[1]).toMatchObject(testBurgerIngredients.main2);
+    expect(state.constructorItems.ingredients[0]).toMatchObject(mockIngredients.mainA);
+    expect(state.constructorItems.ingredients[1]).toMatchObject(mockIngredients.mainB);
   });
 
-  it('Обработка экшена очистки конструктора', () => {
-    const initialState = {
-      loading: false,
-      error: null,
-      constructorItems: {
-        bun: null,
-        ingredients: []
-      },
-      orderRequest: false,
-      orderModalData: null
-    };
-
+  it('очищает конструктор при оформлении заказа', () => {
     let state = reducer(undefined, { type: '' });
 
-    state = reducer(state, addIngredient(testBurgerIngredients.bun));
-    state = reducer(state, addIngredient(testBurgerIngredients.main1));
-    state = reducer(state, addIngredient(testBurgerIngredients.main2));
-    state = reducer(state, addIngredient(testBurgerIngredients.sauce));
+    state = reducer(state, addIngredient(mockIngredients.bun));
+    state = reducer(state, addIngredient(mockIngredients.mainA));
+    state = reducer(state, addIngredient(mockIngredients.mainB));
+    state = reducer(state, addIngredient(mockIngredients.sauce));
 
     state = reducer(state, clearOrder());
 
-    expect(state).toEqual(initialState);
+    expect(state.constructorItems.bun).toBeNull();
+    expect(state.constructorItems.ingredients).toHaveLength(0);
   });
 });

@@ -1,14 +1,22 @@
-import { updateUser, userApi, toRegisterUser, logInUser, logOutUser, authChecked } from './UserInfoSlice'
-import slice from './UserInfoSlice';
-const reducer = slice.reducer;
+import userSlice from './UserInfoSlice';
+import {
+  updateUser,
+  userApi,
+  toRegisterUser,
+  logInUser,
+  logOutUser,
+  authChecked
+} from './UserInfoSlice';
 
-const test_user = {
+const reducer = userSlice.reducer;
+
+const mockUser = {
   name: 'Игорь',
   email: 'zhaglo@mirea.ru'
-}
+};
 
-describe('Проверка UserSlice', () => {
-  const initialState = {
+describe('UserInfoSlice — редьюсер пользователя', () => {
+  const baseState = {
     isAuthChecked: false,
     isAuthenticated: false,
     user: null,
@@ -16,142 +24,157 @@ describe('Проверка UserSlice', () => {
     loading: false
   };
 
-  it('Проверка начального состояния', () => {
-    expect(reducer(undefined, { type: '' })).toEqual(initialState);
+  it('возвращает начальное состояние', () => {
+    const result = reducer(undefined, { type: 'UNKNOWN_ACTION' });
+    expect(result).toEqual(baseState);
   });
 
+  describe('updateUser', () => {
+    it('pending — loading устанавливается в true', () => {
+      const result = reducer(baseState, { type: updateUser.pending.type });
+      expect(result.loading).toBe(true);
+    });
 
-  //updateUser
-  it('Установка loading=true при updateUser.pending', () => {
-    const action = { type: updateUser.pending.type };
-    const state = reducer(initialState, action);
-    expect(state.loading).toBe(true);
+    it('fulfilled — обновляет пользователя', () => {
+      const action = {
+        type: updateUser.fulfilled.type,
+        payload: { user: mockUser }
+      };
+      const result = reducer({ ...baseState, loading: true }, action);
+      expect(result.loading).toBe(false);
+      expect(result.user).toEqual(mockUser);
+    });
+
+    it('rejected — сохраняет ошибку', () => {
+      const action = {
+        type: updateUser.rejected.type,
+        error: { message: 'error' }
+      };
+      const result = reducer({ ...baseState, loading: true }, action);
+      expect(result.loading).toBe(false);
+      expect(result.error).toBe('error');
+    });
   });
 
-  it('Установка данных и loading=false при updateUser.fulfilled', () => {
-    const mockPayload = { user: test_user };
+  describe('userApi', () => {
+    it('pending', () => {
+      const result = reducer(baseState, { type: userApi.pending.type });
+      expect(result.loading).toBe(true);
+    });
 
-    const action = { type: updateUser.fulfilled.type, payload: mockPayload };
-    const state = reducer({ ...initialState, loading: true }, action);
+    it('fulfilled', () => {
+      const action = {
+        type: userApi.fulfilled.type,
+        payload: { user: mockUser }
+      };
+      const result = reducer({ ...baseState, loading: true }, action);
+      expect(result.loading).toBe(false);
+      expect(result.user).toEqual(mockUser);
+    });
 
-    expect(state.loading).toBe(false);
-    expect(state.user).toEqual(mockPayload.user);
+    it('rejected', () => {
+      const action = {
+        type: userApi.rejected.type,
+        error: { message: 'error' }
+      };
+      const result = reducer({ ...baseState, loading: true }, action);
+      expect(result.loading).toBe(false);
+      expect(result.error).toBe('error');
+    });
   });
 
-  it('Установка ошибки и loading=false при updateUser.rejected', () => {
-    const action = { type: updateUser.rejected.type, error: { message: 'error' } };
-    const state = reducer({ ...initialState, loading: true }, action);
+  describe('toRegisterUser', () => {
+    it('pending', () => {
+      const result = reducer(baseState, { type: toRegisterUser.pending.type });
+      expect(result.loading).toBe(true);
+    });
 
-    expect(state.loading).toBe(false);
-    expect(state.error).toBe('error');
+    it('fulfilled', () => {
+      const result = reducer(
+        { ...baseState, loading: true },
+        {
+          type: toRegisterUser.fulfilled.type,
+          payload: mockUser
+        }
+      );
+      expect(result.loading).toBe(false);
+      expect(result.user).toEqual(mockUser);
+    });
+
+    it('rejected', () => {
+      const result = reducer(
+        { ...baseState, loading: true },
+        {
+          type: toRegisterUser.rejected.type,
+          error: { message: 'error' }
+        }
+      );
+      expect(result.loading).toBe(false);
+      expect(result.error).toBe('error');
+    });
   });
 
+  describe('logInUser', () => {
+    it('pending', () => {
+      const result = reducer(baseState, { type: logInUser.pending.type });
+      expect(result.loading).toBe(true);
+    });
 
-  //userApi
-  it('Установка loading=true при userApi.pending', () => {
-    const action = { type: userApi.pending.type };
-    const state = reducer(initialState, action);
-    expect(state.loading).toBe(true);
+    it('fulfilled', () => {
+      const result = reducer(
+        { ...baseState, loading: true },
+        {
+          type: logInUser.fulfilled.type,
+          payload: mockUser
+        }
+      );
+      expect(result.loading).toBe(false);
+      expect(result.user).toEqual(mockUser);
+    });
+
+    it('rejected', () => {
+      const result = reducer(
+        { ...baseState, loading: true },
+        {
+          type: logInUser.rejected.type,
+          error: { message: 'error' }
+        }
+      );
+      expect(result.loading).toBe(false);
+      expect(result.error).toBe('error');
+    });
   });
 
-  it('Установка данных и loading=false при userApi.fulfilled', () => {
-    const mockPayload = { user: test_user };
+  describe('logOutUser', () => {
+    it('pending', () => {
+      const result = reducer(baseState, { type: logOutUser.pending.type });
+      expect(result.loading).toBe(true);
+    });
 
-    const action = { type: userApi.fulfilled.type, payload: mockPayload };
-    const state = reducer({ ...initialState, loading: true }, action);
+    it('fulfilled — user сбрасывается', () => {
+      const result = reducer(
+        { ...baseState, loading: true, user: mockUser },
+        { type: logOutUser.fulfilled.type }
+      );
+      expect(result.loading).toBe(false);
+      expect(result.user).toBeNull();
+    });
 
-    expect(state.loading).toBe(false);
-    expect(state.user).toEqual(mockPayload.user);
+    it('rejected', () => {
+      const result = reducer(
+        { ...baseState, loading: true },
+        {
+          type: logOutUser.rejected.type,
+          error: { message: 'error' }
+        }
+      );
+      expect(result.loading).toBe(false);
+      expect(result.error).toBe('error');
+    });
   });
 
-  it('Установка ошибки и loading=false при userApi.rejected', () => {
-    const action = { type: userApi.rejected.type, error: { message: 'error' } };
-    const state = reducer({ ...initialState, loading: true }, action);
-
-    expect(state.loading).toBe(false);
-    expect(state.error).toBe('error');
-  });
-
-
-  //toRegisterUser
-  it('Установка loading=true при toRegisterUser.pending', () => {
-    const action = { type: toRegisterUser.pending.type };
-    const state = reducer(initialState, action);
-    expect(state.loading).toBe(true);
-  });
-
-  it('Установка данных и loading=false при toRegisterUser.fulfilled', () => {
-    const mockPayload = test_user;
-
-    const action = { type: toRegisterUser.fulfilled.type, payload: mockPayload };
-    const state = reducer({ ...initialState, loading: true }, action);
-
-    expect(state.loading).toBe(false);
-    expect(state.user).toEqual(mockPayload);
-  });
-
-  it('Установка ошибки и loading=false при toRegisterUser.rejected', () => {
-    const action = { type: toRegisterUser.rejected.type, error: { message: 'error' } };
-    const state = reducer({ ...initialState, loading: true }, action);
-
-    expect(state.loading).toBe(false);
-    expect(state.error).toBe('error');
-  });
-
-
-  //logInUser
-  it('Установка loading=true при logInUser.pending', () => {
-    const action = { type: logInUser.pending.type };
-    const state = reducer(initialState, action);
-    expect(state.loading).toBe(true);
-  });
-
-  it('Установка данных и loading=false при logInUser.fulfilled', () => {
-    const mockPayload = test_user;
-
-    const action = { type: logInUser.fulfilled.type, payload: mockPayload };
-    const state = reducer({ ...initialState, loading: true }, action);
-
-    expect(state.loading).toBe(false);
-    expect(state.user).toEqual(mockPayload);
-  });
-
-  it('Установка ошибки и loading=false при logInUser.rejected', () => {
-    const action = { type: logInUser.rejected.type, error: { message: 'error' } };
-    const state = reducer({ ...initialState, loading: true }, action);
-
-    expect(state.loading).toBe(false);
-    expect(state.error).toBe('error');
-  });
-
-
-  //logOutUser
-  it('Установка loading=true при logOutUser.pending', () => {
-    const action = { type: logOutUser.pending.type };
-    const state = reducer(initialState, action);
-    expect(state.loading).toBe(true);
-  });
-
-  it('Установка данных и loading=false при logOutUser.fulfilled', () => {
-    const action = { type: logOutUser.fulfilled.type };
-    const state = reducer({ ...initialState, loading: true }, action);
-
-    expect(state.loading).toBe(false);
-    expect(state.user).toBeNull();
-  });
-
-  it('Установка ошибки и loading=false при logOutUser.rejected', () => {
-    const action = { type: logOutUser.rejected.type, error: { message: 'error' } };
-    const state = reducer({ ...initialState, loading: true }, action);
-
-    expect(state.loading).toBe(false);
-    expect(state.error).toBe('error');
-  });
-
-
-  //authChecked
-  it('authChecked', () => {
-    const state = reducer(initialState, authChecked());
-    expect(state.isAuthChecked).toBe(true);
+  it('authChecked — устанавливает флаг isAuthChecked', () => {
+    const result = reducer(baseState, authChecked());
+    expect(result.isAuthChecked).toBe(true);
   });
 });

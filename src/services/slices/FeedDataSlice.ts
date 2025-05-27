@@ -26,8 +26,8 @@ export const getOrderByNumber = createAsyncThunk(
   'feed/getOrder',
   async (number: number, { rejectWithValue }) => {
     try {
-      const respons = await getOrderByNumberApi(number);
-      return respons;
+      const response = await getOrderByNumberApi(number);
+      return response;
     } catch {
       return rejectWithValue('Error feed data');
     }

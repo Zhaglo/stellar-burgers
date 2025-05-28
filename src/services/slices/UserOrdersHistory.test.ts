@@ -1,9 +1,11 @@
-import userOrdersSlice, { initialState, ordersHistory } from './UserOrdersHistory';
+import userOrdersSlice, {
+  initialState,
+  ordersHistory
+} from './UserOrdersHistory';
 
 const reducer = userOrdersSlice.reducer;
 
 describe('UserOrdersHistory — редьюсер заказов пользователя', () => {
-
   it('возвращает корректное начальное состояние', () => {
     const result = reducer(undefined, { type: 'UNKNOWN' });
     expect(result).toEqual(initialState);

@@ -85,9 +85,15 @@ describe('BurgerConstructorSlice — тесты редьюсера констр�
     state = reducer(state, addIngredient(mockIngredients.sauce));
 
     expect(state.constructorItems.ingredients).toHaveLength(3);
-    expect(state.constructorItems.ingredients[0]).toMatchObject(mockIngredients.mainA);
-    expect(state.constructorItems.ingredients[1]).toMatchObject(mockIngredients.mainB);
-    expect(state.constructorItems.ingredients[2]).toMatchObject(mockIngredients.sauce);
+    expect(state.constructorItems.ingredients[0]).toMatchObject(
+      mockIngredients.mainA
+    );
+    expect(state.constructorItems.ingredients[1]).toMatchObject(
+      mockIngredients.mainB
+    );
+    expect(state.constructorItems.ingredients[2]).toMatchObject(
+      mockIngredients.sauce
+    );
   });
 
   it('удаляет ингредиент корректно', () => {
@@ -115,12 +121,20 @@ describe('BurgerConstructorSlice — тесты редьюсера констр�
     state = reducer(state, addIngredient(mockIngredients.mainB));
 
     state = reducer(state, moveDownIngredient(0));
-    expect(state.constructorItems.ingredients[0]).toMatchObject(mockIngredients.mainB);
-    expect(state.constructorItems.ingredients[1]).toMatchObject(mockIngredients.mainA);
+    expect(state.constructorItems.ingredients[0]).toMatchObject(
+      mockIngredients.mainB
+    );
+    expect(state.constructorItems.ingredients[1]).toMatchObject(
+      mockIngredients.mainA
+    );
 
     state = reducer(state, moveUpIngredient(1));
-    expect(state.constructorItems.ingredients[0]).toMatchObject(mockIngredients.mainA);
-    expect(state.constructorItems.ingredients[1]).toMatchObject(mockIngredients.mainB);
+    expect(state.constructorItems.ingredients[0]).toMatchObject(
+      mockIngredients.mainA
+    );
+    expect(state.constructorItems.ingredients[1]).toMatchObject(
+      mockIngredients.mainB
+    );
   });
 
   it('очищает конструктор при оформлении заказа', () => {

@@ -16,7 +16,6 @@ const mockUser = {
 };
 
 describe('UserInfoSlice — редьюсер пользователя', () => {
-
   it('возвращает начальное состояние', () => {
     const result = reducer(undefined, { type: 'UNKNOWN_ACTION' });
     expect(result).toEqual(initialState);
@@ -78,7 +77,9 @@ describe('UserInfoSlice — редьюсер пользователя', () => {
 
   describe('toRegisterUser', () => {
     it('pending', () => {
-      const result = reducer(initialState, { type: toRegisterUser.pending.type });
+      const result = reducer(initialState, {
+        type: toRegisterUser.pending.type
+      });
       expect(result.loading).toBe(true);
     });
 

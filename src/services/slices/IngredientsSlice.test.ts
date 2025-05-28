@@ -1,9 +1,11 @@
-import ingredientSlice, { initialState, getIngredients } from './IngredientsSlice';
+import ingredientSlice, {
+  initialState,
+  getIngredients
+} from './IngredientsSlice';
 
 const reducer = ingredientSlice.reducer;
 
 describe('IngredientsSlice — тесты редьюсера ингредиентов', () => {
-
   it('возвращает начальное состояние по умолчанию', () => {
     const result = reducer(undefined, { type: 'UNKNOWN' });
     expect(result).toEqual(initialState);
@@ -41,7 +43,8 @@ describe('IngredientsSlice — тесты редьюсера ингредиен�
         calories: 4242,
         price: 424,
         image: 'https://code.s3.yandex.net/react/code/meat-01.png',
-        image_mobile: 'https://code.s3.yandex.net/react/code/meat-01-mobile.png',
+        image_mobile:
+          'https://code.s3.yandex.net/react/code/meat-01-mobile.png',
         image_large: 'https://code.s3.yandex.net/react/code/meat-01-large.png',
         __v: 0
       },
@@ -55,7 +58,8 @@ describe('IngredientsSlice — тесты редьюсера ингредиен�
         calories: 643,
         price: 988,
         image: 'https://code.s3.yandex.net/react/code/meat-03.png',
-        image_mobile: 'https://code.s3.yandex.net/react/code/meat-03-mobile.png',
+        image_mobile:
+          'https://code.s3.yandex.net/react/code/meat-03-mobile.png',
         image_large: 'https://code.s3.yandex.net/react/code/meat-03-large.png',
         __v: 0
       },
@@ -69,7 +73,8 @@ describe('IngredientsSlice — тесты редьюсера ингредиен�
         calories: 30,
         price: 90,
         image: 'https://code.s3.yandex.net/react/code/sauce-02.png',
-        image_mobile: 'https://code.s3.yandex.net/react/code/sauce-02-mobile.png',
+        image_mobile:
+          'https://code.s3.yandex.net/react/code/sauce-02-mobile.png',
         image_large: 'https://code.s3.yandex.net/react/code/sauce-02-large.png',
         __v: 0
       }

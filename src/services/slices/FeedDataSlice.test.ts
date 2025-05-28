@@ -1,13 +1,9 @@
 import feedSlice, { initialState } from './FeedDataSlice';
-import {
-  getFeedData,
-  getOrderByNumber
-} from './FeedDataSlice';
+import { getFeedData, getOrderByNumber } from './FeedDataSlice';
 
 const reducer = feedSlice.reducer;
 
 describe('FeedDataSlice — тестирование редьюсера ленты заказов', () => {
-
   it('возвращает начальное состояние', () => {
     const state = reducer(undefined, { type: 'UNKNOWN_ACTION' });
     expect(state).toEqual(initialState);
@@ -15,7 +11,9 @@ describe('FeedDataSlice — тестирование редьюсера лент
 
   describe('getFeedData async thunk', () => {
     it('устанавливает loading в true на pending', () => {
-      const nextState = reducer(initialState, { type: getFeedData.pending.type });
+      const nextState = reducer(initialState, {
+        type: getFeedData.pending.type
+      });
       expect(nextState.loading).toBe(true);
     });
 
@@ -72,7 +70,9 @@ describe('FeedDataSlice — тестирование редьюсера лент
 
   describe('getOrderByNumber async thunk', () => {
     it('устанавливает loading в true на pending', () => {
-      const state = reducer(initialState, { type: getOrderByNumber.pending.type });
+      const state = reducer(initialState, {
+        type: getOrderByNumber.pending.type
+      });
       expect(state.loading).toBe(true);
     });
 

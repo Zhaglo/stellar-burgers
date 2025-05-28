@@ -14,6 +14,8 @@ const initialState: TStateIngredients = {
   loading: false
 };
 
+export { initialState };
+
 export const getIngredients = createAsyncThunk(
   'ingredients/getIngredients',
   async () => {

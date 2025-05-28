@@ -1,4 +1,4 @@
-import feedSlice from './FeedDataSlice';
+import feedSlice, { initialState } from './FeedDataSlice';
 import {
   getFeedData,
   getOrderByNumber
@@ -7,23 +7,15 @@ import {
 const reducer = feedSlice.reducer;
 
 describe('FeedDataSlice — тестирование редьюсера ленты заказов', () => {
-  const defaultState = {
-    orders: [],
-    total: 0,
-    totalToday: 0,
-    error: null,
-    loading: false,
-    modalOrder: null
-  };
 
   it('возвращает начальное состояние', () => {
     const state = reducer(undefined, { type: 'UNKNOWN_ACTION' });
-    expect(state).toEqual(defaultState);
+    expect(state).toEqual(initialState);
   });
 
   describe('getFeedData async thunk', () => {
     it('устанавливает loading в true на pending', () => {
-      const nextState = reducer(defaultState, { type: getFeedData.pending.type });
+      const nextState = reducer(initialState, { type: getFeedData.pending.type });
       expect(nextState.loading).toBe(true);
     });
 
@@ -54,7 +46,7 @@ describe('FeedDataSlice — тестирование редьюсера лент
       };
 
       const result = reducer(
-        { ...defaultState, loading: true },
+        { ...initialState, loading: true },
         { type: getFeedData.fulfilled.type, payload: mockResponse }
       );
 
@@ -66,7 +58,7 @@ describe('FeedDataSlice — тестирование редьюсера лент
 
     it('обрабатывает ошибку при rejected', () => {
       const result = reducer(
-        { ...defaultState, loading: true },
+        { ...initialState, loading: true },
         {
           type: getFeedData.rejected.type,
           error: { message: 'error' }
@@ -80,7 +72,7 @@ describe('FeedDataSlice — тестирование редьюсера лент
 
   describe('getOrderByNumber async thunk', () => {
     it('устанавливает loading в true на pending', () => {
-      const state = reducer(defaultState, { type: getOrderByNumber.pending.type });
+      const state = reducer(initialState, { type: getOrderByNumber.pending.type });
       expect(state.loading).toBe(true);
     });
 
@@ -109,7 +101,7 @@ describe('FeedDataSlice — тестирование редьюсера лент
       };
 
       const result = reducer(
-        { ...defaultState, loading: true },
+        { ...initialState, loading: true },
         {
           type: getOrderByNumber.fulfilled.type,
           payload: mockResponse
@@ -122,7 +114,7 @@ describe('FeedDataSlice — тестирование редьюсера лент
 
     it('обрабатывает ошибку при rejected', () => {
       const result = reducer(
-        { ...defaultState, loading: true },
+        { ...initialState, loading: true },
         {
           type: getOrderByNumber.rejected.type,
           error: { message: 'error' }

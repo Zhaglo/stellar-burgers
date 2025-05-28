@@ -1,4 +1,4 @@
-import reducerSlice from './BurgerConstructorSlice';
+import reducerSlice, { initialState } from './BurgerConstructorSlice';
 import {
   addIngredient,
   removeIngredient,
@@ -72,16 +72,7 @@ describe('BurgerConstructorSlice — тесты редьюсера констр�
   it('возвращает начальное состояние по умолчанию', () => {
     const initial = reducer(undefined, { type: 'UNKNOWN_ACTION' });
 
-    expect(initial).toEqual({
-      loading: false,
-      error: null,
-      constructorItems: {
-        bun: null,
-        ingredients: []
-      },
-      orderRequest: false,
-      orderModalData: null
-    });
+    expect(initial).toEqual(initialState);
   });
 
   it('добавляет ингредиенты корректно', () => {

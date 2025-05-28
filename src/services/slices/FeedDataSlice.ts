@@ -20,6 +20,8 @@ const initialState: TFeedState = {
   modalOrder: null
 };
 
+export { initialState };
+
 export const getFeedData = createAsyncThunk('feed/data', getFeedsApi);
 
 export const getOrderByNumber = createAsyncThunk(

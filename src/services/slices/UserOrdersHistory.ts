@@ -14,6 +14,8 @@ const initialState: TOrderHistoryState = {
   loading: false
 };
 
+export { initialState };
+
 export const ordersHistory = createAsyncThunk(
   'user/orderHistory',
   getOrdersApi

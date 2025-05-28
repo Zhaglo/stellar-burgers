@@ -27,6 +27,8 @@ const initialState: TstateUser = {
   loading: false
 };
 
+export { initialState };
+
 export const userApi = createAsyncThunk('user/userApi', getUserApi);
 
 export const toRegisterUser = createAsyncThunk(

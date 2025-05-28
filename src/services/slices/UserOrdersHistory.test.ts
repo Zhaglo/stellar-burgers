@@ -1,24 +1,18 @@
-import userOrdersSlice from './UserOrdersHistory';
-import { ordersHistory } from './UserOrdersHistory';
+import userOrdersSlice, { initialState, ordersHistory } from './UserOrdersHistory';
 
 const reducer = userOrdersSlice.reducer;
 
 describe('UserOrdersHistory — редьюсер заказов пользователя', () => {
-  const defaultState = {
-    orders: [],
-    error: null,
-    loading: false
-  };
 
   it('возвращает корректное начальное состояние', () => {
     const result = reducer(undefined, { type: 'UNKNOWN' });
-    expect(result).toEqual(defaultState);
+    expect(result).toEqual(initialState);
   });
 
   describe('ordersHistory async thunk', () => {
     it('pending — устанавливает флаг загрузки', () => {
       const action = { type: ordersHistory.pending.type };
-      const result = reducer(defaultState, action);
+      const result = reducer(initialState, action);
       expect(result.loading).toBe(true);
     });
 
@@ -48,7 +42,7 @@ describe('UserOrdersHistory — редьюсер заказов пользова
         type: ordersHistory.fulfilled.type,
         payload: mockOrders
       };
-      const result = reducer({ ...defaultState, loading: true }, action);
+      const result = reducer({ ...initialState, loading: true }, action);
 
       expect(result.loading).toBe(false);
       expect(result.orders).toEqual(mockOrders);
@@ -60,7 +54,7 @@ describe('UserOrdersHistory — редьюсер заказов пользова
         type: ordersHistory.rejected.type,
         error: { message: errorMessage }
       };
-      const result = reducer({ ...defaultState, loading: true }, action);
+      const result = reducer({ ...initialState, loading: true }, action);
 
       expect(result.loading).toBe(false);
       expect(result.error).toBe(errorMessage);

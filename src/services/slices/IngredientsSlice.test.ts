@@ -1,23 +1,17 @@
-import ingredientSlice from './IngredientsSlice';
-import { getIngredients } from './IngredientsSlice';
+import ingredientSlice, { initialState, getIngredients } from './IngredientsSlice';
 
 const reducer = ingredientSlice.reducer;
 
 describe('IngredientsSlice — тесты редьюсера ингредиентов', () => {
-  const defaultState = {
-    ingredients: [],
-    error: null,
-    loading: false
-  };
 
   it('возвращает начальное состояние по умолчанию', () => {
     const result = reducer(undefined, { type: 'UNKNOWN' });
-    expect(result).toEqual(defaultState);
+    expect(result).toEqual(initialState);
   });
 
   it('устанавливает loading в true при getIngredients.pending', () => {
     const action = { type: getIngredients.pending.type };
-    const result = reducer(defaultState, action);
+    const result = reducer(initialState, action);
     expect(result.loading).toBe(true);
   });
 
@@ -86,7 +80,7 @@ describe('IngredientsSlice — тесты редьюсера ингредиен�
       payload: fakeIngredients
     };
 
-    const result = reducer({ ...defaultState, loading: true }, action);
+    const result = reducer({ ...initialState, loading: true }, action);
 
     expect(result.loading).toBe(false);
     expect(result.ingredients).toEqual(fakeIngredients);
@@ -98,7 +92,7 @@ describe('IngredientsSlice — тесты редьюсера ингредиен�
       error: { message: 'error' }
     };
 
-    const result = reducer({ ...defaultState, loading: true }, action);
+    const result = reducer({ ...initialState, loading: true }, action);
 
     expect(result.loading).toBe(false);
     expect(result.error).toBe('error');

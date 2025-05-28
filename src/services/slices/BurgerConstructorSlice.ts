@@ -29,6 +29,8 @@ const initialState: TBurgerConstructorState = {
   orderModalData: null
 };
 
+export { initialState };
+
 export const createOrder = createAsyncThunk(
   'order/createOrder',
   async (data: string[]) => {

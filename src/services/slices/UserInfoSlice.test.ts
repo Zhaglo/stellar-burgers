@@ -1,4 +1,4 @@
-import userSlice from './UserInfoSlice';
+import userSlice, { initialState } from './UserInfoSlice';
 import {
   updateUser,
   userApi,
@@ -16,22 +16,15 @@ const mockUser = {
 };
 
 describe('UserInfoSlice — редьюсер пользователя', () => {
-  const baseState = {
-    isAuthChecked: false,
-    isAuthenticated: false,
-    user: null,
-    error: null,
-    loading: false
-  };
 
   it('возвращает начальное состояние', () => {
     const result = reducer(undefined, { type: 'UNKNOWN_ACTION' });
-    expect(result).toEqual(baseState);
+    expect(result).toEqual(initialState);
   });
 
   describe('updateUser', () => {
     it('pending — loading устанавливается в true', () => {
-      const result = reducer(baseState, { type: updateUser.pending.type });
+      const result = reducer(initialState, { type: updateUser.pending.type });
       expect(result.loading).toBe(true);
     });
 
@@ -40,7 +33,7 @@ describe('UserInfoSlice — редьюсер пользователя', () => {
         type: updateUser.fulfilled.type,
         payload: { user: mockUser }
       };
-      const result = reducer({ ...baseState, loading: true }, action);
+      const result = reducer({ ...initialState, loading: true }, action);
       expect(result.loading).toBe(false);
       expect(result.user).toEqual(mockUser);
     });
@@ -50,7 +43,7 @@ describe('UserInfoSlice — редьюсер пользователя', () => {
         type: updateUser.rejected.type,
         error: { message: 'error' }
       };
-      const result = reducer({ ...baseState, loading: true }, action);
+      const result = reducer({ ...initialState, loading: true }, action);
       expect(result.loading).toBe(false);
       expect(result.error).toBe('error');
     });
@@ -58,7 +51,7 @@ describe('UserInfoSlice — редьюсер пользователя', () => {
 
   describe('userApi', () => {
     it('pending', () => {
-      const result = reducer(baseState, { type: userApi.pending.type });
+      const result = reducer(initialState, { type: userApi.pending.type });
       expect(result.loading).toBe(true);
     });
 
@@ -67,7 +60,7 @@ describe('UserInfoSlice — редьюсер пользователя', () => {
         type: userApi.fulfilled.type,
         payload: { user: mockUser }
       };
-      const result = reducer({ ...baseState, loading: true }, action);
+      const result = reducer({ ...initialState, loading: true }, action);
       expect(result.loading).toBe(false);
       expect(result.user).toEqual(mockUser);
     });
@@ -77,7 +70,7 @@ describe('UserInfoSlice — редьюсер пользователя', () => {
         type: userApi.rejected.type,
         error: { message: 'error' }
       };
-      const result = reducer({ ...baseState, loading: true }, action);
+      const result = reducer({ ...initialState, loading: true }, action);
       expect(result.loading).toBe(false);
       expect(result.error).toBe('error');
     });
@@ -85,13 +78,13 @@ describe('UserInfoSlice — редьюсер пользователя', () => {
 
   describe('toRegisterUser', () => {
     it('pending', () => {
-      const result = reducer(baseState, { type: toRegisterUser.pending.type });
+      const result = reducer(initialState, { type: toRegisterUser.pending.type });
       expect(result.loading).toBe(true);
     });
 
     it('fulfilled', () => {
       const result = reducer(
-        { ...baseState, loading: true },
+        { ...initialState, loading: true },
         {
           type: toRegisterUser.fulfilled.type,
           payload: mockUser
@@ -103,7 +96,7 @@ describe('UserInfoSlice — редьюсер пользователя', () => {
 
     it('rejected', () => {
       const result = reducer(
-        { ...baseState, loading: true },
+        { ...initialState, loading: true },
         {
           type: toRegisterUser.rejected.type,
           error: { message: 'error' }
@@ -116,13 +109,13 @@ describe('UserInfoSlice — редьюсер пользователя', () => {
 
   describe('logInUser', () => {
     it('pending', () => {
-      const result = reducer(baseState, { type: logInUser.pending.type });
+      const result = reducer(initialState, { type: logInUser.pending.type });
       expect(result.loading).toBe(true);
     });
 
     it('fulfilled', () => {
       const result = reducer(
-        { ...baseState, loading: true },
+        { ...initialState, loading: true },
         {
           type: logInUser.fulfilled.type,
           payload: mockUser
@@ -134,7 +127,7 @@ describe('UserInfoSlice — редьюсер пользователя', () => {
 
     it('rejected', () => {
       const result = reducer(
-        { ...baseState, loading: true },
+        { ...initialState, loading: true },
         {
           type: logInUser.rejected.type,
           error: { message: 'error' }
@@ -147,13 +140,13 @@ describe('UserInfoSlice — редьюсер пользователя', () => {
 
   describe('logOutUser', () => {
     it('pending', () => {
-      const result = reducer(baseState, { type: logOutUser.pending.type });
+      const result = reducer(initialState, { type: logOutUser.pending.type });
       expect(result.loading).toBe(true);
     });
 
     it('fulfilled — user сбрасывается', () => {
       const result = reducer(
-        { ...baseState, loading: true, user: mockUser },
+        { ...initialState, loading: true, user: mockUser },
         { type: logOutUser.fulfilled.type }
       );
       expect(result.loading).toBe(false);
@@ -162,7 +155,7 @@ describe('UserInfoSlice — редьюсер пользователя', () => {
 
     it('rejected', () => {
       const result = reducer(
-        { ...baseState, loading: true },
+        { ...initialState, loading: true },
         {
           type: logOutUser.rejected.type,
           error: { message: 'error' }
@@ -174,7 +167,7 @@ describe('UserInfoSlice — редьюсер пользователя', () => {
   });
 
   it('authChecked — устанавливает флаг isAuthChecked', () => {
-    const result = reducer(baseState, authChecked());
+    const result = reducer(initialState, authChecked());
     expect(result.isAuthChecked).toBe(true);
   });
 });

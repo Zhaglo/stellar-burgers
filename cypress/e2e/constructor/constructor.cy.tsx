@@ -1,3 +1,5 @@
+import { SELECTORS } from '../../support/selectors';
+
 describe('Конструктор бургера — добавление ингредиентов', () => {
   beforeEach(() => {
     cy.intercept('GET', '**/ingredients', { fixture: 'ingredients.json' }).as('fetchIngredients');
@@ -6,29 +8,31 @@ describe('Конструктор бургера — добавление инг�
   });
 
   it('Можно добавить булку', () => {
-    cy.get('[data-cy=ingredient_643d69a5c3f7b9001cfa093c]')
+    cy.get(SELECTORS.bun)
       .should('be.visible')
       .within(() => {
         cy.contains('Добавить').click();
       });
 
-    cy.get('[data-cy=bun_top_constructor]')
+    cy.get(SELECTORS.bunTop)
       .should('be.visible')
       .and('include.text', 'Краторная булка N-200i');
 
-    cy.get('[data-cy=bun_bottom_constructor]')
+    cy.get(SELECTORS.bunBottom)
       .should('be.visible')
       .and('include.text', 'Краторная булка N-200i');
   });
 
   it('Можно добавить начинку', () => {
-    cy.get('[data-cy=ingredient_643d69a5c3f7b9001cfa0941]')
+    cy.get(SELECTORS.ingredientMain).scrollIntoView();
+
+    cy.get(SELECTORS.main)
       .should('be.visible')
       .within(() => {
         cy.contains('Добавить').click();
       });
 
-    cy.get('[data-cy=main_constructor]')
+    cy.get(SELECTORS.mainConstructor)
       .should('be.visible')
       .and('include.text', 'Биокотлета из марсианской Магнолии');
   });

@@ -1,3 +1,5 @@
+import { SELECTORS } from '../../support/selectors';
+
 describe('Процесс оформления заказа', () => {
   beforeEach(() => {
     cy.intercept('GET', '**/ingredients', { fixture: 'ingredients.json' }).as('fetchIngredients');
@@ -12,39 +14,39 @@ describe('Процесс оформления заказа', () => {
   });
 
   it('Успешное оформление заказа', () => {
-    cy.get('[data-cy=ingredient_643d69a5c3f7b9001cfa093c]')
+    cy.get(SELECTORS.ingredientBun)
       .contains('Добавить')
       .click();
 
-    cy.get('[data-cy=ingredient_643d69a5c3f7b9001cfa0941]')
+    cy.get(SELECTORS.ingredientMain)
       .contains('Добавить')
       .click();
 
-    cy.get('[data-cy=burger_constructor]')
+    cy.get(SELECTORS.burgerConstructor)
       .should('contain.text', 'Краторная булка N-200i (верх)')
       .and('contain.text', 'Краторная булка N-200i (низ)')
       .and('contain.text', 'Биокотлета из марсианской Магнолии');
 
-    cy.get('[data-cy=order_container]')
+    cy.get(SELECTORS.orderContainer)
       .contains('Оформить заказ')
       .click();
 
     cy.wait('@submitOrder');
 
-    cy.get('[data-cy=modal]')
+    cy.get(SELECTORS.modal)
       .should('exist')
       .and('contain.text', '912');
 
-    cy.get('[data-cy=modal_close]').click();
+    cy.get(SELECTORS.modalClose).click();
 
-    cy.get('[data-cy=modal]').should('not.exist');
+    cy.get(SELECTORS.modal).should('not.exist');
   });
 
   it('Нельзя оформить заказ без ингредиентов', () => {
-    cy.get('[data-cy=order_container]')
+    cy.get(SELECTORS.orderContainer)
       .contains('Оформить заказ')
       .click();
 
-    cy.get('[data-cy=modal]').should('not.exist');
+    cy.get(SELECTORS.modal).should('not.exist');
   });
 });
